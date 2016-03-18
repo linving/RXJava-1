@@ -8,7 +8,6 @@ import com.example.app.rxjava.module.main.model.ia.WeatherIA;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.raizlabs.android.dbflow.sql.language.Select;
 
 import java.util.List;
 
@@ -17,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by Administrator on 2016/2/29.
@@ -42,14 +42,15 @@ public class WeatherModel extends BaseModel implements WeatherIA {
         // 服务
         mService = mRetrofit.create(Service.class);
     }
-    public Observable<WeatherListData> getServerData(final String lat, final String lon, final String cnt) {
-        return mService.getWeatherList(lat, lon, cnt, "82baf3673f8b23cb70d1165d3ce73b9c");
-    }
-
-    @Override
-    public Observable<List<WeatherData>> getLocalData() {
-        List<WeatherData> data = new Select().from(WeatherData.class).queryList();
-        return Observable.just(data);
+    public Observable<List<WeatherData>> getServerData(final String lat, final String lon, final String cnt) {
+        return mService.getWeatherList(lat, lon, cnt, "82baf3673f8b23cb70d1165d3ce73b9c")
+                .flatMap(new Func1<WeatherListData, Observable<List<WeatherData>>>() {
+                    @Override
+                    public Observable<List<WeatherData>> call(WeatherListData data) {
+                        List<WeatherData> list = data.getList();
+                        return Observable.just(list);
+                    }
+                });
     }
 
     /**

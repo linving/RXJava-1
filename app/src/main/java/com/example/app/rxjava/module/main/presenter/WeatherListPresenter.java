@@ -1,20 +1,15 @@
 package com.example.app.rxjava.module.main.presenter;
 
-import com.example.app.rxjava.AppApplication;
 import com.example.app.rxjava.bean.weather.WeatherData;
-import com.example.app.rxjava.bean.weather.WeatherListData;
 import com.example.app.rxjava.module.main.model.WeatherModel;
 import com.example.app.rxjava.module.main.model.ia.WeatherIA;
 import com.example.app.rxjava.module.main.view.ia.WeatherListViewIA;
-import com.raizlabs.android.dbflow.runtime.TransactionManager;
 
 import java.util.List;
 
-import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -32,13 +27,6 @@ public class WeatherListPresenter {
 
     public void loadData(final int pageNum) {
         mWeatherIA.getServerData(LAT, LON, CNT)
-                .flatMap(new Func1<WeatherListData, Observable<List<WeatherData>>>() {
-                    @Override
-                    public Observable<List<WeatherData>> call(WeatherListData data) {
-                        List<WeatherData> list = data.getList();
-                        return Observable.just(list);
-                    }
-                })
                 .subscribeOn(Schedulers.io())// 在非UI线程中执行getUser
                 .doOnSubscribe(new Action0() {
                     @Override

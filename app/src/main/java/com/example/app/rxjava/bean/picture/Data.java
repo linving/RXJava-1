@@ -1,38 +1,27 @@
 package com.example.app.rxjava.bean.picture;
 
-import com.example.app.rxjava.base.db.AppDatabase;
-import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ModelContainer;
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
-import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.structure.BaseModel;
-
 /**
  * Created by Administrator on 2016/3/10.
  */
-@ModelContainer
-@Table(database = AppDatabase.class)
-public class Data extends BaseModel {
-    @PrimaryKey(autoincrement = false)
-    private long id;
-    private int setId;
+public class Data {
+    private String id;
+    private String setId;
     private int pn;
-    @Column
     private String thumbnail_url;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public int getSetId() {
+    public String getSetId() {
         return setId;
     }
 
-    public void setSetId(int setId) {
+    public void setSetId(String setId) {
         this.setId = setId;
     }
 

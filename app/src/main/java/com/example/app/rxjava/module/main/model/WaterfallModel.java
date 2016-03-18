@@ -2,15 +2,11 @@ package com.example.app.rxjava.module.main.model;
 
 import com.example.app.rxjava.base.BaseModel;
 import com.example.app.rxjava.base.ResultsDeserializer;
-import com.example.app.rxjava.bean.picture.Data;
 import com.example.app.rxjava.bean.picture.Picture;
 import com.example.app.rxjava.module.main.model.ia.WaterfallIA;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.raizlabs.android.dbflow.sql.language.Select;
-
-import java.util.List;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -30,9 +26,9 @@ public class WaterfallModel extends BaseModel implements WaterfallIA {
     public WaterfallModel() {
         // 对返回的数据进行解析
         Gson gsonInstance = new GsonBuilder()
-                .registerTypeAdapter(new TypeToken<List<Picture>>() {
+                .registerTypeAdapter(new TypeToken<Picture>() {
                         }.getType(),
-                        new ResultsDeserializer<List<Picture>>())
+                        new ResultsDeserializer<Picture>())
                 .create();
 
         // 适配器
@@ -48,12 +44,6 @@ public class WaterfallModel extends BaseModel implements WaterfallIA {
     @Override
     public Observable<Picture> getServerData(int pageNum) {
         return mService.getData(pageNum, ROWNUM, "宠物", "全部");
-    }
-
-    @Override
-    public Observable<List<Data>> getLocalData() {
-        List<Data> data = new Select().from(Data.class).queryList();
-        return Observable.just(data);
     }
 
     /**
