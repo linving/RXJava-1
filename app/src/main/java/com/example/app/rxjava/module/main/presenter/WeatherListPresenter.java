@@ -31,78 +31,43 @@ public class WeatherListPresenter {
     }
 
     public void loadData(final int pageNum) {
-        if (!AppApplication.isNetConnect) {
-            mWeatherIA.getLocalData()
-                    .subscribeOn(Schedulers.io())// 在非UI线程中执行getUser
-                    .doOnSubscribe(new Action0() {
-                        @Override
-                        public void call() {
-                            mWeatherListViewIA.showProgressDialog(); // 需要在主线程执行
+        mWeatherIA.getServerData(LAT, LON, CNT)
+                .flatMap(new Func1<WeatherListData, Observable<List<WeatherData>>>() {
+                    @Override
+                    public Observable<List<WeatherData>> call(WeatherListData data) {
+                        List<WeatherData> list = data.getList();
+                        return Observable.just(list);
+                    }
+                })
+                .subscribeOn(Schedulers.io())// 在非UI线程中执行getUser
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mWeatherListViewIA.showProgressDialog(); // 需要在主线程执行
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                .observeOn(AndroidSchedulers.mainThread())// 在UI线程中执行结果
+                .subscribe(new Subscriber<List<WeatherData>>() {
+                    @Override
+                    public void onNext(List<WeatherData> data) {
+                        if (pageNum == 0) {
+                            mWeatherListViewIA.refresh(data);
+                        } else {
+                            mWeatherListViewIA.loadNews(data);
                         }
-                    })
-                    .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
-                    .observeOn(AndroidSchedulers.mainThread())// 在UI线程中执行结果
-                    .subscribe(new Subscriber<List<WeatherData>>() {
-                        @Override
-                        public void onNext(List<WeatherData> data) {
-                            if (pageNum == 0) {
-                                mWeatherListViewIA.refresh(data);
-                            } else {
-                                mWeatherListViewIA.loadNews(data);
-                            }
-                        }
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            mWeatherListViewIA.showError(e.getMessage());
-                            mWeatherListViewIA.hideProgressDialog();
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        mWeatherListViewIA.showError(e.getMessage());
+                        mWeatherListViewIA.hideProgressDialog();
+                    }
 
-                        @Override
-                        public void onCompleted() {
-                            mWeatherListViewIA.hideProgressDialog();
-                        }
-                    });
-        } else {
-            mWeatherIA.getServerData(LAT, LON, CNT)
-                    .flatMap(new Func1<WeatherListData, Observable<List<WeatherData>>>() {
-                        @Override
-                        public Observable<List<WeatherData>> call(WeatherListData data) {
-                            List<WeatherData> list = data.getList();
-                            TransactionManager.getInstance().saveOnSaveQueue(list);
-                            return Observable.just(list);
-                        }
-                    })
-                    .subscribeOn(Schedulers.io())// 在非UI线程中执行getUser
-                    .doOnSubscribe(new Action0() {
-                        @Override
-                        public void call() {
-                            mWeatherListViewIA.showProgressDialog(); // 需要在主线程执行
-                        }
-                    })
-                    .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
-                    .observeOn(AndroidSchedulers.mainThread())// 在UI线程中执行结果
-                    .subscribe(new Subscriber<List<WeatherData>>() {
-                        @Override
-                        public void onNext(List<WeatherData> data) {
-                            if (pageNum == 0) {
-                                mWeatherListViewIA.refresh(data);
-                            } else {
-                                mWeatherListViewIA.loadNews(data);
-                            }
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            mWeatherListViewIA.showError(e.getMessage());
-                            mWeatherListViewIA.hideProgressDialog();
-                        }
-
-                        @Override
-                        public void onCompleted() {
-                            mWeatherListViewIA.hideProgressDialog();
-                        }
-                    });
-        }
+                    @Override
+                    public void onCompleted() {
+                        mWeatherListViewIA.hideProgressDialog();
+                    }
+                });
     }
 }

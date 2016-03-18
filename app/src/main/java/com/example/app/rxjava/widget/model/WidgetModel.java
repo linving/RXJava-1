@@ -1,6 +1,6 @@
 package com.example.app.rxjava.widget.model;
 
-import com.example.app.rxjava.base.RequestInterceptor;
+import com.example.app.rxjava.base.interceptor.RequestInterceptor;
 import com.example.app.rxjava.base.ResultsDeserializer;
 import com.example.app.rxjava.bean.picture.Picture;
 import com.example.app.rxjava.widget.model.ia.WidgetIA;

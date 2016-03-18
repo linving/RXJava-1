@@ -1,7 +1,6 @@
 package com.example.app.rxjava.module.main.model;
 
 import com.example.app.rxjava.base.BaseModel;
-import com.example.app.rxjava.base.RequestInterceptor;
 import com.example.app.rxjava.base.ResultsDeserializer;
 import com.example.app.rxjava.bean.picture.Data;
 import com.example.app.rxjava.bean.picture.Picture;
@@ -13,10 +12,7 @@ import com.raizlabs.android.dbflow.sql.language.Select;
 
 import java.util.List;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

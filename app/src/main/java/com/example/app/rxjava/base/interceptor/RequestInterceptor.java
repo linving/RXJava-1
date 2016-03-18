@@ -1,4 +1,4 @@
-package com.example.app.rxjava.base;
+package com.example.app.rxjava.base.interceptor;
 
 /**
  * Created by Administrator on 2016/3/4.

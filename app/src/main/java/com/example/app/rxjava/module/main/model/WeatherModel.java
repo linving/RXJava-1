@@ -1,7 +1,6 @@
 package com.example.app.rxjava.module.main.model;
 
 import com.example.app.rxjava.base.BaseModel;
-import com.example.app.rxjava.base.RequestInterceptor;
 import com.example.app.rxjava.base.ResultsDeserializer;
 import com.example.app.rxjava.bean.weather.WeatherData;
 import com.example.app.rxjava.bean.weather.WeatherListData;
@@ -11,17 +10,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

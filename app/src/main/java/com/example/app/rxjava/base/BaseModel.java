@@ -1,26 +1,17 @@
 package com.example.app.rxjava.base;
 
-import android.content.Context;
-
 import com.example.app.rxjava.AppApplication;
 import com.example.app.rxjava.base.cookie.CookiesManager;
-import com.example.app.rxjava.bean.picture.Picture;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.example.app.rxjava.base.interceptor.CacheInterceptor;
+import com.example.app.rxjava.base.interceptor.RequestInterceptor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.File;
 
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.HttpUrl;
+import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Administrator on 2016/3/10.
@@ -38,11 +29,21 @@ public abstract class BaseModel {
             // 拦截器，在请求中增加额外参数
             RequestInterceptor requestInterceptor = new RequestInterceptor();
 
+            // 缓存拦截器
+            CacheInterceptor cacheInterceptor = new CacheInterceptor();
+            //设置缓存路径
+            File httpCacheDirectory = new File(AppApplication.getInstance().getCacheDir(), "responses");
+            //设置缓存大小 10M
+            Cache cache = new Cache(httpCacheDirectory, 10 * 1024 * 1024);
+
             // OkHttp3.0的使用方式
             OkHttpClient client = new OkHttpClient.Builder()
                     .cookieJar(new CookiesManager())
                     .addInterceptor(requestInterceptor)
                     .addInterceptor(loggingInterceptor)
+                    .addInterceptor(cacheInterceptor)
+                    .addNetworkInterceptor(cacheInterceptor)
+                    .cache(cache)
                     .build();
 
             // 适配器
