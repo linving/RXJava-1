@@ -147,9 +147,9 @@ public class MainActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             if(position == 0) {
-                return WeatherListFragment.newInstance();
+                return ChartFragment.newInstance();
             } else if(position == 1) {
-                return WaterfallFragment.newInstance();
+                return WeatherListFragment.newInstance();
             } else {
                 return RecyclerGridFragment.newInstance();
             }
@@ -165,9 +165,9 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "List Fragment";
+                    return "Chart Fragment";
                 case 1:
-                    return "Waterfall Fragment";
+                    return "List Fragment";
                 case 2:
                     return "Grid Fragment";
             }
