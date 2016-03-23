@@ -30,7 +30,7 @@ import rx.Observable;
  * Created by Administrator on 2016/2/29.
  */
 public class ChartModel extends BaseModel implements ChartIA {
-    private static final String ENDPOINT = "http://m.xueka.com";
+    private static final String ENDPOINT = "http://www.baidu.com";
     private final Service mService;
 
     public ChartModel() {
@@ -100,7 +100,7 @@ public class ChartModel extends BaseModel implements ChartIA {
      */
     private interface Service {
 
-        @GET("/student/version.action")
+        @GET("/s")
         Observable<WeatherListData> getData();
 
     }
