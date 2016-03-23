@@ -3,13 +3,7 @@ package com.example.app.rxjava.base;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.Toast;
-
-import com.example.app.rxjava.R;
-
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Administrator on 2016/3/4.

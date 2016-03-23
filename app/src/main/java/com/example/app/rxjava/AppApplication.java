@@ -22,6 +22,9 @@ public class AppApplication extends Application {
     private ConnectionReceiver connectionReceiver = new ConnectionReceiver();
     public static AppApplication APP_APPLICATION;
 
+    //刷新广播监听
+    public static final String REFRESH_ACTION = "REFRESH_ACTION";
+
     public static AppApplication getInstance() {
         return APP_APPLICATION;
     }

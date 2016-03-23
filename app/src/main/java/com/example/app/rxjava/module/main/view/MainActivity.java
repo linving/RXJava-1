@@ -24,9 +24,10 @@ import android.widget.Toast;
 
 import com.example.app.rxjava.AppApplication;
 import com.example.app.rxjava.R;
+import com.example.app.rxjava.base.BaseActivity;
 import com.example.app.rxjava.receiver.ConnectionReceiver;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private Context context = this;
     private AppApplication application = null;
 
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == android.R.id.home) {
             finish();
         } else if(id == R.id.action_refresh) {
-            Intent broadcastIntent = new Intent(WeatherListFragment.REFRESH_ACTION);
+            Intent broadcastIntent = new Intent(AppApplication.REFRESH_ACTION);
             sendBroadcast(broadcastIntent);
         } else if (id == R.id.action_settings) {
 

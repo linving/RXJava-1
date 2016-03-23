@@ -1,11 +1,11 @@
 package com.example.app.rxjava.module.main.view;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,28 +14,26 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.app.rxjava.AppApplication;
 import com.example.app.rxjava.R;
 import com.example.app.rxjava.base.BaseFragment;
 import com.example.app.rxjava.base.OnFragmentInteractionListener;
 import com.example.app.rxjava.base.chart.MyMarkerView;
+import com.example.app.rxjava.module.main.presenter.ChartPresenter;
+import com.example.app.rxjava.module.main.view.ia.ChartViewIA;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
 import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-
-import java.util.ArrayList;
 
 /**
  * A fragment representing a list of Items.
@@ -44,11 +42,16 @@ import java.util.ArrayList;
  * interface.
  */
 public class ChartFragment extends BaseFragment implements SeekBar.OnSeekBarChangeListener,
-        OnChartGestureListener, OnChartValueSelectedListener {
+        OnChartGestureListener, OnChartValueSelectedListener, ChartViewIA {
 
     private LineChart mChart;
     private SeekBar mSeekBarX, mSeekBarY;
     private TextView tvX, tvY;
+
+    private ChartPresenter presenter;
+
+    //刷新广播监听
+    private RefreshActionReceiver refreshActionReceiver = new RefreshActionReceiver();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -65,6 +68,7 @@ public class ChartFragment extends BaseFragment implements SeekBar.OnSeekBarChan
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        presenter = new ChartPresenter(this);
     }
 
     @Override
@@ -161,7 +165,7 @@ public class ChartFragment extends BaseFragment implements SeekBar.OnSeekBarChan
         //mChart.getViewPortHandler().setMaximumScaleX(2f);
 
         // add data
-        setData(45, 100);
+        presenter.loadData(45, 100);
 
 //        mChart.setVisibleXRange(20);
 //        mChart.setVisibleYRange(20f, AxisDependency.LEFT);
@@ -182,11 +186,14 @@ public class ChartFragment extends BaseFragment implements SeekBar.OnSeekBarChan
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        IntentFilter filter = new IntentFilter(AppApplication.REFRESH_ACTION);
+        getActivity().registerReceiver(refreshActionReceiver, filter);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        getActivity().unregisterReceiver(refreshActionReceiver);
     }
 
     @Override
@@ -204,7 +211,7 @@ public class ChartFragment extends BaseFragment implements SeekBar.OnSeekBarChan
         tvX.setText("" + (mSeekBarX.getProgress() + 1));
         tvY.setText("" + (mSeekBarY.getProgress()));
 
-        setData(mSeekBarX.getProgress() + 1, mSeekBarY.getProgress());
+        presenter.loadData(mSeekBarX.getProgress() + 1, mSeekBarY.getProgress());
 
         // redraw
         mChart.invalidate();
@@ -222,48 +229,8 @@ public class ChartFragment extends BaseFragment implements SeekBar.OnSeekBarChan
 
     }
 
-    private void setData(int count, float range) {
-
-        ArrayList<String> xVals = new ArrayList<String>();
-        for (int i = 0; i < count; i++) {
-            xVals.add((i) + "");
-        }
-
-        ArrayList<Entry> yVals = new ArrayList<Entry>();
-
-        for (int i = 0; i < count; i++) {
-
-            float mult = (range + 1);
-            float val = (float) (Math.random() * mult) + 3;// + (float)
-            // ((mult *
-            // 0.1) / 10);
-            yVals.add(new Entry(val, i));
-        }
-
-        // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
-        // set1.setFillAlpha(110);
-        // set1.setFillColor(Color.RED);
-
-        // set the line to be drawn like this "- - - - - -"
-        set1.enableDashedLine(10f, 5f, 0f);
-        set1.enableDashedHighlightLine(10f, 5f, 0f);
-        set1.setColor(Color.BLACK);
-        set1.setCircleColor(Color.BLACK);
-        set1.setLineWidth(1f);
-        set1.setCircleRadius(3f);
-        set1.setDrawCircleHole(false);
-        set1.setValueTextSize(9f);
-        Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.fade_red);
-        set1.setFillDrawable(drawable);
-        set1.setDrawFilled(true);
-
-        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-        dataSets.add(set1); // add the datasets
-
-        // create a data object with the datasets
-        LineData data = new LineData(xVals, dataSets);
-
+    @Override
+    public void refresh(LineData data) {
         // set data
         mChart.setData(data);
     }
@@ -323,4 +290,17 @@ public class ChartFragment extends BaseFragment implements SeekBar.OnSeekBarChan
     public void onNothingSelected() {
         Log.i("Nothing selected", "Nothing selected.");
     }
+
+    private class RefreshActionReceiver extends BroadcastReceiver {
+
+        // 子类收到广播后的逻辑
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (action.equals(AppApplication.REFRESH_ACTION)) {
+                presenter.loadData(45, 100);
+            }
+        }
+    }
+
 }

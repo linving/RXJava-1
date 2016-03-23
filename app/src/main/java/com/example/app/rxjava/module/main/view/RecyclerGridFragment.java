@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.app.rxjava.AppApplication;
 import com.example.app.rxjava.R;
 import com.example.app.rxjava.base.BaseFragment;
 import com.example.app.rxjava.base.OnFragmentInteractionListener;
@@ -50,7 +51,6 @@ public class  RecyclerGridFragment extends BaseFragment implements OnFragmentInt
     private RecyclerGridPresenter presenter;
 
     //刷新广播监听
-    public static final String REFRESH_ACTION = "REFRESH_ACTION";
     private RefreshActionReceiver refreshActionReceiver = new RefreshActionReceiver();
 
     //页面控件
@@ -129,7 +129,7 @@ public class  RecyclerGridFragment extends BaseFragment implements OnFragmentInt
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
-        IntentFilter filter = new IntentFilter(REFRESH_ACTION);
+        IntentFilter filter = new IntentFilter(AppApplication.REFRESH_ACTION);
         getActivity().registerReceiver(refreshActionReceiver, filter);
     }
 
@@ -186,7 +186,7 @@ public class  RecyclerGridFragment extends BaseFragment implements OnFragmentInt
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (action.equals(REFRESH_ACTION)) {
+            if (action.equals(AppApplication.REFRESH_ACTION)) {
                 presenter.loadData(0);
             }
         }
