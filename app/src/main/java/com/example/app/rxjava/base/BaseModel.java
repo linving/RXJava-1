@@ -23,6 +23,8 @@ public class BaseModel {
     private static volatile CacheInterceptor cacheInterceptor;
     private static volatile File httpCacheDirectory;
     private static volatile Cache cache;
+    // OkHttp3.0的使用方式
+    private static volatile OkHttpClient client;
 
     protected Retrofit.Builder getRetrofitBuilder() {
         if (loggingInterceptor == null) {
@@ -40,17 +42,17 @@ public class BaseModel {
                 httpCacheDirectory = new File(AppApplication.getInstance().getCacheDir(), "responses");
                 //设置缓存大小 10M
                 cache = new Cache(httpCacheDirectory, 10 * 1024 * 1024);
+                client = new OkHttpClient.Builder()
+                        .cookieJar(new CookiesManager())
+                        .addInterceptor(requestInterceptor)
+                        .addInterceptor(loggingInterceptor)
+                        .addInterceptor(cacheInterceptor)
+                        .addNetworkInterceptor(cacheInterceptor)
+                        .cache(cache)
+                        .build();
             }
         }
-        // OkHttp3.0的使用方式
-        OkHttpClient client = new OkHttpClient.Builder()
-                .cookieJar(new CookiesManager())
-                .addInterceptor(requestInterceptor)
-                .addInterceptor(loggingInterceptor)
-                .addInterceptor(cacheInterceptor)
-                .addNetworkInterceptor(cacheInterceptor)
-                .cache(cache)
-                .build();
+
         // 适配器
         Retrofit.Builder builder = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
