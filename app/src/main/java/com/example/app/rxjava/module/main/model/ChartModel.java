@@ -3,11 +3,13 @@ package com.example.app.rxjava.module.main.model;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.example.app.rxjava.AppApplication;
 import com.example.app.rxjava.R;
 import com.example.app.rxjava.base.BaseModel;
 import com.example.app.rxjava.base.ResultsDeserializer;
+import com.example.app.rxjava.base.converter.html.HtmlConverterFactory;
 import com.example.app.rxjava.bean.weather.WeatherListData;
 import com.example.app.rxjava.module.main.model.ia.ChartIA;
 import com.github.mikephil.charting.data.Entry;
@@ -19,32 +21,27 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by Administrator on 2016/2/29.
  */
 public class ChartModel extends BaseModel implements ChartIA {
-    private static final String ENDPOINT = "http://www.baidu.com";
+    private static final String ENDPOINT = "http://m.xueka.com";
     private final Service mService;
 
     public ChartModel() {
-        // 对返回的数据进行解析
-        Gson gsonInstance = new GsonBuilder()
-                .registerTypeAdapter(new TypeToken<WeatherListData>() {
-                        }.getType(),
-                        new ResultsDeserializer<WeatherListData>())
-                .create();
-
         // 适配器
         Retrofit mRetrofit = getRetrofitBuilder()
                 .baseUrl(ENDPOINT)
-                .addConverterFactory(GsonConverterFactory.create(gsonInstance))
+                .addConverterFactory(HtmlConverterFactory.create())
                 .build();
 
         // 服务
@@ -53,6 +50,14 @@ public class ChartModel extends BaseModel implements ChartIA {
 
     @Override
     public Observable<LineData> getServerData(int count, float range) {
+        mService.getData().flatMap(new Func1<String, Observable<?>>() {
+            @Override
+            public Observable<?> call(String data) {
+                Log.e("result", data);
+                return null;
+            }
+        });
+
         ArrayList<String> xVals = new ArrayList<String>();
         for (int i = 0; i < count; i++) {
             xVals.add((i) + "");
@@ -100,8 +105,8 @@ public class ChartModel extends BaseModel implements ChartIA {
      */
     private interface Service {
 
-        @GET("/s")
-        Observable<WeatherListData> getData();
+        @GET("/student/version.action")
+        Observable<String> getData();
 
     }
 }

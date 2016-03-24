@@ -1,5 +1,7 @@
 package com.example.app.rxjava.base;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

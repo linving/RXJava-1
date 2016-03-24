@@ -104,8 +104,8 @@
     <orderEntry type="library" exported="" name="okio-1.6.0" level="project" />
     <orderEntry type="library" exported="" name="universal-image-loader-1.9.5" level="project" />
     <orderEntry type="library" exported="" name="adapter-rxjava-2.0.0-beta4" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.4" level="project" />
     <orderEntry type="library" exported="" name="MPAndroidChart-v2.2.3" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.4" level="project" />
     <orderEntry type="module" module-name="swiperefreshendless" exported="" />
   </component>
 </module>
